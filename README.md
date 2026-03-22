@@ -28,7 +28,7 @@ Ambas se cargan vía CDN, no requieren instalación.
 
 ## Cómo usar
 
-1. Ingresa en `https://andrikesquer.github.io/metodo_biseccion/` o si has clonado el repositorio abre `index.html` en cualquier navegador moderno (Chrome, Firefox, Edge)
+1. Ingresa a [https://andrikesquer.github.io/metodo_biseccion/](https://andrikesquer.github.io/metodo_biseccion/) o si has clonado el repositorio abre `index.html` en cualquier navegador moderno (Chrome, Firefox, Edge)
 2. Escribe la función f(x) en el campo de entrada usando la sintaxis indicada
 3. Define el intervalo [xa, xb] donde se sospecha que existe la raíz
 4. Ajusta la tolerancia de error y el número máximo de iteraciones si lo necesitas
