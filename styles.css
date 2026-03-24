@@ -29,6 +29,7 @@
 body {
   min-height: 100vh;
   overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
   background:
     radial-gradient(circle at top, rgba(255, 251, 239, 0.92), transparent 34%),
     linear-gradient(180deg, #f5ecd6 0%, #e8d6b2 45%, #dcc59e 100%);
@@ -237,6 +238,7 @@ header h1 span {
   grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.75fr);
   gap: 24px;
   align-items: stretch;
+  min-width: 0;
 }
 
 .controls-card {
@@ -278,12 +280,13 @@ label {
 input,
 select {
   width: 100%;
+  min-height: 48px;
   padding: 12px 14px;
   background: rgba(255, 251, 242, 0.72);
   border: 1px solid rgba(109, 78, 45, 0.28);
   color: var(--ink);
   font-family: var(--mono);
-  font-size: 14px;
+  font-size: 16px;
   outline: none;
   transition:
     border-color 0.2s ease,
@@ -317,7 +320,8 @@ select:focus {
 }
 
 .preset-btn {
-  padding: 6px 12px;
+  min-height: 40px;
+  padding: 8px 12px;
   border: 1px solid rgba(109, 78, 45, 0.3);
   background: rgba(255, 248, 234, 0.68);
   color: var(--accent-deep);
@@ -338,6 +342,7 @@ select:focus {
 
 .btn-run {
   margin-top: 24px;
+  min-height: 50px;
   padding: 15px 28px;
   border: 1px solid rgba(91, 45, 22, 0.5);
   background: linear-gradient(180deg, #9c6c35 0%, #7d4f26 100%);
@@ -449,6 +454,7 @@ select:focus {
   grid-template-columns: minmax(220px, 0.62fr) minmax(0, 1.58fr);
   gap: 24px;
   align-items: stretch;
+  min-width: 0;
 }
 
 .stats-column {
@@ -459,6 +465,7 @@ select:focus {
 .stat-box {
   padding: 22px 24px;
   background: var(--surface-strong);
+  min-width: 0;
 }
 
 .stat-label {
@@ -472,6 +479,7 @@ select:focus {
   font-size: clamp(1.75rem, 3vw, 2.35rem);
   color: var(--accent-deep);
   line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 .stat-sub {
@@ -484,18 +492,38 @@ select:focus {
 .chart-wrap {
   min-height: 100%;
   padding-top: 28px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 canvas {
+  display: block;
   width: 100% !important;
+}
+
+#chart {
+  max-width: 100%;
+}
+
+.table-hint {
+  margin: -4px 0 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
 }
 
 .table-wrap {
   overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(125, 79, 38, 0.55) rgba(109, 78, 45, 0.1);
 }
 
 table {
   width: 100%;
+  min-width: 760px;
   border-collapse: collapse;
   font-family: var(--mono);
   font-size: 13px;
@@ -632,7 +660,7 @@ td.iter-num {
 
 @media (max-width: 720px) {
   .container {
-    padding-inline: 14px;
+    padding: 22px 12px 56px;
   }
 
   .hero-panel,
@@ -650,6 +678,41 @@ td.iter-num {
 
   header h1 {
     font-size: 1.95rem;
+    white-space: normal;
+    line-height: 1.02;
+    text-wrap: balance;
+  }
+
+  .hero-copy {
+    margin-top: 12px;
+    font-size: 1.08rem;
+    line-height: 1.28;
+  }
+
+  .hero-meta {
+    gap: 8px;
+    margin-top: 18px;
+  }
+
+  .meta-chip {
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn-run {
+    width: 100%;
+  }
+
+  .results-shell {
+    gap: 18px;
+  }
+
+  .stat-value {
+    font-size: 1.95rem;
+  }
+
+  #chart {
+    height: 260px !important;
   }
 }
 
@@ -667,6 +730,28 @@ td.iter-num {
     flex-direction: column;
   }
 
+  .presets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .preset-label {
+    grid-column: 1 / -1;
+  }
+
+  .preset-btn {
+    width: 100%;
+  }
+
+  .table-wrap {
+    margin-inline: -18px;
+    padding-inline: 18px 8px;
+  }
+
+  .table-hint {
+    line-height: 1.35;
+  }
+
   .conv-row {
     gap: 8px;
   }
@@ -677,5 +762,9 @@ td.iter-num {
 
   .conv-val {
     width: 52px;
+  }
+
+  #chart {
+    height: 220px !important;
   }
 }

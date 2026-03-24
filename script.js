@@ -139,6 +139,7 @@ function run() {
 
 function buildChart(expr, xa0, xb0, root) {
     const theme = getComputedStyle(document.documentElement);
+    const isMobile = window.innerWidth <= 520;
     const accent = theme.getPropertyValue("--accent").trim() || "#8a5a2b";
     const accentSoft = theme.getPropertyValue("--accent-soft").trim() || "#b98a4d";
     const accentDeep = theme.getPropertyValue("--accent-deep").trim() || "#5b2d16";
@@ -222,7 +223,8 @@ function buildChart(expr, xa0, xb0, root) {
                 legend: {
                     labels: {
                         color: inkSoft,
-                        font: { family: mono, size: 12 },
+                        boxWidth: isMobile ? 10 : 18,
+                        font: { family: mono, size: isMobile ? 10 : 12 },
                     },
                 },
                 tooltip: {
@@ -241,8 +243,8 @@ function buildChart(expr, xa0, xb0, root) {
                     grid: { color: line },
                     ticks: {
                         color: inkSoft,
-                        font: { family: mono, size: 11 },
-                        maxTicksLimit: 10,
+                        font: { family: mono, size: isMobile ? 10 : 11 },
+                        maxTicksLimit: isMobile ? 6 : 10,
                     },
                     border: { color: accent },
                 },
@@ -250,7 +252,8 @@ function buildChart(expr, xa0, xb0, root) {
                     grid: { color: line },
                     ticks: {
                         color: inkSoft,
-                        font: { family: mono, size: 11 },
+                        font: { family: mono, size: isMobile ? 10 : 11 },
+                        maxTicksLimit: isMobile ? 6 : 8,
                     },
                     border: { color: accent },
                 },
