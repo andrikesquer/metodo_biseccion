@@ -138,6 +138,15 @@ function run() {
 }
 
 function buildChart(expr, xa0, xb0, root) {
+    const theme = getComputedStyle(document.documentElement);
+    const accent = theme.getPropertyValue("--accent").trim() || "#8a5a2b";
+    const accentSoft = theme.getPropertyValue("--accent-soft").trim() || "#b98a4d";
+    const accentDeep = theme.getPropertyValue("--accent-deep").trim() || "#5b2d16";
+    const inkSoft = theme.getPropertyValue("--ink-soft").trim() || "#5d4935";
+    const line = theme.getPropertyValue("--line").trim() || "rgba(109, 78, 45, 0.34)";
+    const surface = theme.getPropertyValue("--surface").trim() || "rgba(248, 240, 220, 0.8)";
+    const mono = theme.getPropertyValue("--mono").trim() || "'IBM Plex Mono', monospace";
+
     const range = xb0 - xa0;
     const margin = range * 1.5;
     const xMin = xa0 - margin;
@@ -176,7 +185,7 @@ function buildChart(expr, xa0, xb0, root) {
                 {
                     label: "f(x)",
                     data: dataY,
-                    borderColor: "#00d4ff",
+                    borderColor: accent,
                     borderWidth: 2.5,
                     pointRadius: 0,
                     tension: 0.3,
@@ -186,7 +195,7 @@ function buildChart(expr, xa0, xb0, root) {
                 {
                     label: "y = 0",
                     data: zeroData,
-                    borderColor: "rgba(255,255,255,0.15)",
+                    borderColor: line,
                     borderWidth: 1,
                     pointRadius: 0,
                     borderDash: [6, 4],
@@ -196,10 +205,10 @@ function buildChart(expr, xa0, xb0, root) {
                     label: `Raíz ≈ ${parseFloat(root.toFixed(5))}`,
                     data: [{ x: root, y: 0 }],
                     type: "scatter",
-                    backgroundColor: "#ff6b35",
+                    backgroundColor: accentSoft,
                     pointRadius: 9,
                     pointHoverRadius: 11,
-                    borderColor: "#fff",
+                    borderColor: accentDeep,
                     borderWidth: 2,
                     showLine: false,
                 },
@@ -212,38 +221,38 @@ function buildChart(expr, xa0, xb0, root) {
             plugins: {
                 legend: {
                     labels: {
-                        color: "#5a7a99",
-                        font: { family: "'IBM Plex Mono'", size: 12 },
+                        color: inkSoft,
+                        font: { family: mono, size: 12 },
                     },
                 },
                 tooltip: {
-                    backgroundColor: "#111820",
-                    borderColor: "#1e3048",
+                    backgroundColor: surface,
+                    borderColor: line,
                     borderWidth: 1,
-                    titleColor: "#00d4ff",
-                    bodyColor: "#c8d8e8",
-                    titleFont: { family: "'IBM Plex Mono'" },
-                    bodyFont: { family: "'IBM Plex Mono'" },
+                    titleColor: accentDeep,
+                    bodyColor: inkSoft,
+                    titleFont: { family: mono },
+                    bodyFont: { family: mono },
                 },
             },
             scales: {
                 x: {
                     type: "linear",
-                    grid: { color: "rgba(30,48,72,0.6)" },
+                    grid: { color: line },
                     ticks: {
-                        color: "#5a7a99",
-                        font: { family: "'IBM Plex Mono'", size: 11 },
+                        color: inkSoft,
+                        font: { family: mono, size: 11 },
                         maxTicksLimit: 10,
                     },
-                    border: { color: "#1e3048" },
+                    border: { color: accent },
                 },
                 y: {
-                    grid: { color: "rgba(30,48,72,0.6)" },
+                    grid: { color: line },
                     ticks: {
-                        color: "#5a7a99",
-                        font: { family: "'IBM Plex Mono'", size: 11 },
+                        color: inkSoft,
+                        font: { family: mono, size: 11 },
                     },
-                    border: { color: "#1e3048" },
+                    border: { color: accent },
                 },
             },
         },

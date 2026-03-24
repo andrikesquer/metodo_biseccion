@@ -6,146 +6,182 @@
     <title>Método de Bisección</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/12.4.0/math.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    <link rel="icon" href="page_icon.png" />
+    <link rel="icon" href="image.png" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="container">
-      <!-- Header -->
-      <header>
-        <div>
-          <div class="header-badge">Métodos Numéricos</div>
-          <br />
+      <section class="hero">
+        <header class="hero-panel">
+          <div class="header-badge">Estudio de métodos numéricos</div>
           <h1>Método de <span>Bisección</span></h1>
-        </div>
-        <div class="header-sub">f(x) = 0 &nbsp;/&nbsp; búsqueda de raíces</div>
-      </header>
+          <p class="hero-copy">
+            Un tablero para estudiar cómo el intervalo se estrecha mediante el
+            principio geométrico
+            <strong>xr = (xa + xb) / 2</strong> hasta revelar la raíz de
+            <strong>f(x) = 0</strong>.
+          </p>
+          <div class="hero-meta">
+            <div class="meta-chip">Intervalo inicial [xa, xb]</div>
+            <div class="meta-chip">Error porcentual Ep</div>
+            <div class="meta-chip">Registro completo de iteraciones</div>
+          </div>
+        </header>
+      </section>
 
-      <!-- Input card -->
-      <div class="card">
-        <div class="card-title">Configuración</div>
-        <div class="form-grid">
-          <div class="form-group full">
-            <label>f(x) — función</label>
-            <input
-              type="text"
-              id="fx"
-              placeholder="x^4 + 3*x^3 - 2"
-              value="x^4 + 3*x^3 - 2"
-            />
-            <div class="presets">
-              <span
-                style="
-                  font-family: var(--mono);
-                  font-size: 11px;
-                  color: var(--text-dim);
-                  align-self: center;
-                "
-                >Ejemplos:</span
-              >
-              <button
-                class="preset-btn"
-                onclick="setPreset('x^4 + 3*x^3 - 2', 0, 1)"
-              >
-                x⁴+3x³−2
-              </button>
-              <button
-                class="preset-btn"
-                onclick="setPreset('x^3 - x - 2', 1, 2)"
-              >
-                x³−x−2
-              </button>
-              <button
-                class="preset-btn"
-                onclick="setPreset('cos(x) - x', 0, 1)"
-              >
-                cos(x)−x
-              </button>
-              <button
-                class="preset-btn"
-                onclick="setPreset('exp(x) - 3*x', 0, 1)"
-              >
-                eˣ−3x
-              </button>
-              <button class="preset-btn" onclick="setPreset('x^2 - 2', 1, 2)">
-                x²−2
-              </button>
+      <section class="main-layout">
+        <div class="card controls-card">
+          <div class="ornament"><span>✶</span></div>
+          <div class="card-title large">Mesa de configuración</div>
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>f(x) — función</label>
+              <input
+                type="text"
+                id="fx"
+                placeholder="x^4 + 3*x^3 - 2"
+                value="x^4 + 3*x^3 - 2"
+              />
+              <div class="presets">
+                <span class="preset-label">Ejemplos:</span>
+                <button
+                  class="preset-btn"
+                  onclick="setPreset('x^4 + 3*x^3 - 2', 0, 1)"
+                >
+                  x^4+3x^3-2
+                </button>
+                <button
+                  class="preset-btn"
+                  onclick="setPreset('x^3 - x - 2', 1, 2)"
+                >
+                  x^3-x-2
+                </button>
+                <button
+                  class="preset-btn"
+                  onclick="setPreset('cos(x) - x', 0, 1)"
+                >
+                  cos(x)-x
+                </button>
+                <button
+                  class="preset-btn"
+                  onclick="setPreset('exp(x) - 3*x', 0, 1)"
+                >
+                  exp(x)-3x
+                </button>
+                <button class="preset-btn" onclick="setPreset('x^2 - 2', 1, 2)">
+                  x^2-2
+                </button>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>xa — límite inferior</label>
+              <input type="number" id="xa" value="0" step="any" />
+            </div>
+            <div class="form-group">
+              <label>xb — límite superior</label>
+              <input type="number" id="xb" value="1" step="any" />
+            </div>
+            <div class="form-group">
+              <label>Tolerancia Ep (%)</label>
+              <input type="number" id="tol" value="1" step="any" min="0.0001" />
+            </div>
+            <div class="form-group">
+              <label>Máx. iteraciones</label>
+              <input type="number" id="maxiter" value="50" min="1" max="200" />
             </div>
           </div>
-          <div class="form-group">
-            <label>xa — límite inferior</label>
-            <input type="number" id="xa" value="0" step="any" />
-          </div>
-          <div class="form-group">
-            <label>xb — límite superior</label>
-            <input type="number" id="xb" value="1" step="any" />
-          </div>
-          <div class="form-group">
-            <label>Tolerancia Ep (%)</label>
-            <input type="number" id="tol" value="1" step="any" min="0.0001" />
-          </div>
-          <div class="form-group">
-            <label>Máx. iteraciones</label>
-            <input type="number" id="maxiter" value="50" min="1" max="200" />
-          </div>
+          <button class="btn-run" onclick="run()">Calcular raíz</button>
         </div>
-        <button class="btn-run" onclick="run()">▶ &nbsp;Calcular raíz</button>
-      </div>
 
-      <!-- Error -->
+        <aside class="note-card note-card--bitacora">
+          <div class="eyebrow">Bitácora</div>
+          <h3>Regla del taller</h3>
+          <p>
+            La bisección encierra la raíz, parte el intervalo y verifica el
+            cambio de signo en cada paso.
+          </p>
+          <div class="mini-stats">
+            <div class="mini-stat">
+              <strong>2</strong>
+              <span>Extremos</span>
+            </div>
+            <div class="mini-stat">
+              <strong>1</strong>
+              <span>Punto medio</span>
+            </div>
+            <div class="mini-stat">
+              <strong>Ep</strong>
+              <span>Criterio</span>
+            </div>
+          </div>
+        </aside>
+
+        <div class="note-card note-card--guide">
+          <div class="eyebrow">Guía visual</div>
+          <h3>Qué leer en el resultado</h3>
+          <ul>
+            <li>La gráfica muestra el comportamiento global de la función.</li>
+            <li>Las barras exhiben cómo cae el error porcentual.</li>
+            <li>La tabla muestra cada decisión del algoritmo.</li>
+          </ul>
+        </div>
+      </section>
+
       <div class="error-banner" id="error"></div>
 
-      <!-- Results -->
-      <div id="results">
-        <!-- Stats -->
-        <div class="results-grid">
-          <div class="stat-box">
-            <div class="stat-label">Raíz aproximada</div>
-            <div class="stat-value" id="r-root">—</div>
-            <div class="stat-sub" id="r-fxr">f(xr) = —</div>
-          </div>
-          <div class="stat-box">
-            <div class="stat-label">Error porcentual final</div>
-            <div class="stat-value" id="r-ep">—</div>
-            <div class="stat-sub" id="r-iters">— iteraciones</div>
-          </div>
-        </div>
+      <section id="results">
+        <div class="results-shell">
+          <div class="results-grid">
+            <div class="stats-column">
+              <div class="stat-box">
+                <div class="stat-label">Raíz aproximada</div>
+                <div class="stat-value" id="r-root">—</div>
+                <div class="stat-sub" id="r-fxr">f(xr) = —</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-label">Error porcentual final</div>
+                <div class="stat-value" id="r-ep">—</div>
+                <div class="stat-sub" id="r-iters">— iteraciones</div>
+              </div>
+            </div>
 
-        <!-- Chart -->
-        <div class="chart-wrap">
-          <div class="card-title">Gráfica de f(x)</div>
-          <canvas id="chart" height="320"></canvas>
-        </div>
+            <div class="chart-wrap">
+              <div class="ornament"><span>✶</span></div>
+              <div class="card-title">Gráfica de f(x)</div>
+              <canvas id="chart" height="320"></canvas>
+            </div>
+          </div>
 
-        <!-- Convergence bars -->
-        <div class="card" id="conv-card">
-          <div class="card-title">Convergencia del error porcentual</div>
-          <div id="conv-bars"></div>
-        </div>
+          <div class="card" id="conv-card">
+            <div class="ornament"><span>✶</span></div>
+            <div class="card-title">Convergencia del error porcentual</div>
+            <div id="conv-bars" class="conv-grid"></div>
+          </div>
 
-        <!-- Table -->
-        <div class="card">
-          <div class="card-title">Tabla de iteraciones</div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Iter.</th>
-                  <th>xa</th>
-                  <th>xb</th>
-                  <th>f(xa)</th>
-                  <th>f(xb)</th>
-                  <th>xr</th>
-                  <th>f(xr)</th>
-                  <th>f(xa)·f(xr)</th>
-                  <th>Ep (%)</th>
-                </tr>
-              </thead>
-              <tbody id="iter-table"></tbody>
-            </table>
+          <div class="card">
+            <div class="ornament"><span>✶</span></div>
+            <div class="card-title">Tabla de iteraciones</div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Iter.</th>
+                    <th>xa</th>
+                    <th>xb</th>
+                    <th>f(xa)</th>
+                    <th>f(xb)</th>
+                    <th>xr</th>
+                    <th>f(xr)</th>
+                    <th>f(xa)·f(xr)</th>
+                    <th>Ep (%)</th>
+                  </tr>
+                </thead>
+                <tbody id="iter-table"></tbody>
+              </table>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
 
     <script src="script.js"></script>
