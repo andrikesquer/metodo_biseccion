@@ -49,15 +49,42 @@ function run() {
         );
     }
 
+    // ── raíz exacta en los extremos ──
+    if (fxa0 === 0) {
+        document.getElementById("r-root").textContent = fmt(xa0, 7);
+        document.getElementById("r-fxr").textContent = "f(xr) = 0 (raíz exacta en xa)";
+        document.getElementById("r-ep").textContent = "0%";
+        document.getElementById("r-iters").textContent = "Raíz en el extremo del intervalo";
+        document.getElementById("conv-bars").innerHTML = "";   // ← agregar
+        document.getElementById("iter-table").innerHTML = "";  // ← agregar
+        buildChart(expr, xa0, xb0, xa0);
+        document.getElementById("results").style.display = "block";
+        document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+    }
+
+    if (fxb0 === 0) {
+        document.getElementById("r-root").textContent = fmt(xb0, 7);
+        document.getElementById("r-fxr").textContent = "f(xr) = 0 (raíz exacta en xb)";
+        document.getElementById("r-ep").textContent = "0%";
+        document.getElementById("r-iters").textContent = "Raíz en el extremo del intervalo";
+        buildChart(expr, xa0, xb0, xb0);
+        document.getElementById("results").style.display = "block";
+        document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
+        return;
+    }
+
+    // ── sin cambio de signo ──
     if (fxa0 * fxb0 > 0) {
         return showError(
-            `No hay cambio de signo en [${xa0}, ${xb0}]. f(${xa0}) = ${fmt(fxa0, 4)}, f(${xb0}) = ${fmt(fxb0, 4)}. Ajusta el intervalo.`,
+            `No hay cambio de signo en [${xa0}, ${xb0}]. ` +
+            `f(${xa0}) = ${fmt(fxa0, 4)}, f(${xb0}) = ${fmt(fxb0, 4)}. ` +
+            `Ambos valores tienen el mismo signo — prueba con un intervalo diferente.`
         );
     }
 
-    // ── Bisection ──
-    let xa = xa0,
-        xb = xb0;
+    // ── Bisección ──
+    let xa = xa0, xb = xb0;
     let xrPrev = null;
     const rows = [];
 
@@ -67,8 +94,7 @@ function run() {
         const fxb = evalF(expr, xb);
         const fxr = evalF(expr, xr);
         const prod = fxa * fxr;
-        const ep =
-            xrPrev !== null ? Math.abs((xr - xrPrev) / xr) * 100 : null;
+        const ep = xrPrev !== null ? Math.abs((xr - xrPrev) / xr) * 100 : null;
 
         rows.push({ i, xa, xb, fxa, fxb, xr, fxr, prod, ep });
 
@@ -77,18 +103,20 @@ function run() {
         xrPrev = xr;
 
         if (ep !== null && ep < tol) break;
+        // if (Math.abs(fxr) < 1e-10) break; // raíz encontrada con precisión alta
     }
 
     const last = rows[rows.length - 1];
 
     // ── Stats ──
     document.getElementById("r-root").textContent = fmt(last.xr, 7);
-    document.getElementById("r-fxr").textContent =
-        `f(xr) = ${fmt(last.fxr, 7)}`;
-    document.getElementById("r-ep").textContent =
-        last.ep !== null ? fmt(last.ep, 4) + "%" : "—";
-    document.getElementById("r-iters").textContent =
-        `${rows.length} iteración${rows.length > 1 ? "es" : ""}`;
+    document.getElementById("r-fxr").textContent = `f(xr) = ${fmt(last.fxr, 7)}`;
+    document.getElementById("r-ep").textContent = last.ep !== null ? fmt(last.ep, 4) + "%" : "—";
+    document.getElementById("r-iters").textContent = `${rows.length} iteración${rows.length > 1 ? "es" : ""}`;
+
+    // Limpia barras y tabla de corridas anteriores
+    document.getElementById("conv-bars").innerHTML = "";
+    document.getElementById("iter-table").innerHTML = "";
 
     // ── Chart ──
     buildChart(expr, xa0, xb0, last.xr);
@@ -132,9 +160,7 @@ function run() {
         .join("");
 
     document.getElementById("results").style.display = "block";
-    document
-        .getElementById("results")
-        .scrollIntoView({ behavior: "smooth", block: "start" });
+    document.getElementById("results").scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function buildChart(expr, xa0, xb0, root) {
@@ -149,21 +175,34 @@ function buildChart(expr, xa0, xb0, root) {
     const mono = theme.getPropertyValue("--mono").trim() || "'IBM Plex Mono', monospace";
 
     const range = xb0 - xa0;
-    const margin = range * 1.5;
+    const margin = range * 0.6;
     const xMin = xa0 - margin;
     const xMax = xb0 + margin;
     const steps = 400;
     const dx = (xMax - xMin) / steps;
 
-    const labels = [],
-        dataY = [];
+    // ── Calcula yClamp basado en el intervalo original, no en xMin/xMax ──
+    const stepsPreview = 100;
+    const dxPrev = (xb0 - xa0) / stepsPreview;
+    const previewY = [];
+    for (let i = 0; i <= stepsPreview; i++) {
+        try {
+            const y = evalF(expr, xa0 + i * dxPrev);
+            if (isFinite(y)) previewY.push(Math.abs(y));
+        } catch { }
+    }
+    const yCenter = previewY.length ? Math.max(...previewY) : 10;
+    const yClamp = yCenter * 3;
+
+    // ── Genera los datos de la gráfica con clamp dinámico ──
+    const labels = [], dataY = [];
     for (let i = 0; i <= steps; i++) {
         const x = xMin + i * dx;
         labels.push(parseFloat(x.toFixed(4)));
         try {
             const y = evalF(expr, x);
             dataY.push(
-                isFinite(y) && Math.abs(y) < 1e8
+                isFinite(y) && Math.abs(y) < yClamp
                     ? parseFloat(y.toFixed(6))
                     : null,
             );
@@ -172,7 +211,6 @@ function buildChart(expr, xa0, xb0, root) {
         }
     }
 
-    // Zero line data
     const zeroData = labels.map(() => 0);
 
     if (chartInstance) chartInstance.destroy();
@@ -191,7 +229,7 @@ function buildChart(expr, xa0, xb0, root) {
                     pointRadius: 0,
                     tension: 0.3,
                     fill: false,
-                    spanGaps: false,
+                    spanGaps: true,
                 },
                 {
                     label: "y = 0",
@@ -256,6 +294,8 @@ function buildChart(expr, xa0, xb0, root) {
                         maxTicksLimit: isMobile ? 6 : 8,
                     },
                     border: { color: accent },
+                    suggestedMin: -yClamp,
+                    suggestedMax: yClamp,
                 },
             },
         },
